@@ -10,8 +10,6 @@ class CaesarCipher(ShennonEncoder):
 
     def write_symbol(self, symbol):
         symbol = symbol + self.key
-        if symbol > 255:
-            symbol -= 255
 
         super(CaesarCipher, self).write_symbol(symbol)
 
@@ -26,8 +24,6 @@ class CaesarDecoder(ShennonDecoder):
 
     def get_char(self, n: int):
         n = n - self.key
-        if n < 0:
-            n += 255
 
         return super(CaesarDecoder, self).get_char(n)
 
