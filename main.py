@@ -1,28 +1,11 @@
-# from src.azar import AzarArchive
-# from src.encoders.caesar import CaesarEncoder, CaesarDecoder
-# # from src.encoders.shennon import ShennonEncoder, ShennonDecoder
-#
-# with AzarArchive('./tests/oblomov.txt', './out/oblomov.txt.azar', CaesarEncoder) as azar:
-#     azar.encoder.key = 7
-#     azar.write()
-#
-# with AzarArchive('./out/oblomov.txt.azar', './out/oblomov.txt', CaesarDecoder) as azar:
-#     azar.decoder.key = 7
-#     azar.read()
-
 import os.path
 import subprocess
 import sys
 
 from PySide6 import QtCore, QtWidgets
-from PySide6.QtGui import QIntValidator
-from PySide6.QtWidgets import QProgressBar, QVBoxLayout, QPushButton, QFileDialog, QApplication, QCheckBox, QLineEdit, \
-    QSpinBox
+from PySide6.QtWidgets import QProgressBar, QVBoxLayout, QPushButton, QFileDialog, QApplication, QCheckBox, QSpinBox
 
-from src.azar import AzarArchive
-from src.consts import ARCHIVE_EXTENSION
-from src.encoders.caesar import CaesarEncoder, CaesarDecoder
-from src.encoders.shennon import ShennonEncoder, ShennonDecoder
+from src import AzarArchive, CaesarCipher, CaesarDecoder, ARCHIVE_EXTENSION
 
 
 class ShennonWidget(QtWidgets.QWidget):
@@ -77,7 +60,7 @@ class ShennonWidget(QtWidgets.QWidget):
 
         self.out_path = dialog.getSaveFileName(self, 'Select where to save a file', os.path.join('./out', filename))[0]
 
-        with AzarArchive(path, self.out_path, CaesarEncoder, self.progress_callback, self.on_finish) as azar:
+        with AzarArchive(path, self.out_path, CaesarCipher, self.progress_callback, self.on_finish) as azar:
             azar.encoder.key = self.encryption_key.value()
             azar.write()
 

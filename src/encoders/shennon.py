@@ -60,7 +60,6 @@ class ShennonEncoder(Encoder):
     def write_symbol(self, symbol):
         self.write_int(symbol, SYMBOL_LENGTH)
 
-
     def write(self):
         symbols = self.get_symbols()
         probabilities = self.get_probabilities(symbols)
