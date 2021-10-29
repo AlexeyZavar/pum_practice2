@@ -1,20 +1,27 @@
 # from src.azar import AzarArchive
-# from src.encoders.shennon import ShennonEncoder, ShennonDecoder
+# from src.encoders.caesar import CaesarEncoder, CaesarDecoder
+# # from src.encoders.shennon import ShennonEncoder, ShennonDecoder
 #
-# azar = AzarArchive('./tests/oblomov.txt', ShennonEncoder)
-# azar.write()
+# with AzarArchive('./tests/oblomov.txt', './out/oblomov.txt.azar', CaesarEncoder) as azar:
+#     azar.encoder.key = 7
+#     azar.write()
 #
-# azar = AzarArchive('./out/oblomov.txt.azar', ShennonDecoder)
-# azar.read()
+# with AzarArchive('./out/oblomov.txt.azar', './out/oblomov.txt', CaesarDecoder) as azar:
+#     azar.decoder.key = 7
+#     azar.read()
+
 import os.path
 import subprocess
 import sys
 
 from PySide6 import QtCore, QtWidgets
-from PySide6.QtWidgets import QProgressBar, QVBoxLayout, QPushButton, QFileDialog, QApplication, QCheckBox
+from PySide6.QtGui import QIntValidator
+from PySide6.QtWidgets import QProgressBar, QVBoxLayout, QPushButton, QFileDialog, QApplication, QCheckBox, QLineEdit, \
+    QSpinBox
 
 from src.azar import AzarArchive
 from src.consts import ARCHIVE_EXTENSION
+from src.encoders.caesar import CaesarEncoder, CaesarDecoder
 from src.encoders.shennon import ShennonEncoder, ShennonDecoder
 
 
@@ -32,12 +39,17 @@ class ShennonWidget(QtWidgets.QWidget):
 
         self.encode_btn = QPushButton('Encode')
         self.decode_btn = QPushButton('Decode')
+
+        self.encode_btn.clicked.connect(self.encode)
+        self.decode_btn.clicked.connect(self.decode)
+
         self.draw_progress_bar_checkbox = QCheckBox('Draw progress bar (slower)')
         self.draw_progress_bar_checkbox.setChecked(True)
         self.draw_progress_bar_checkbox.stateChanged.connect(self.draw_progress_bar_checked)
 
-        self.encode_btn.clicked.connect(self.encode)
-        self.decode_btn.clicked.connect(self.decode)
+        self.encryption_key = QSpinBox()
+        self.encryption_key.setMinimum(0)
+        self.encryption_key.setMaximum(13)
 
         self.encode_btn.setStyleSheet(btn_style)
         self.decode_btn.setStyleSheet(btn_style)
@@ -53,6 +65,7 @@ class ShennonWidget(QtWidgets.QWidget):
         self.layout.addWidget(self.encode_btn)
         self.layout.addWidget(self.decode_btn)
         self.layout.addWidget(self.draw_progress_bar_checkbox)
+        self.layout.addWidget(self.encryption_key)
         self.layout.addWidget(self.progress_bar)
         self.layout.addStretch()
 
@@ -64,7 +77,8 @@ class ShennonWidget(QtWidgets.QWidget):
 
         self.out_path = dialog.getSaveFileName(self, 'Select where to save a file', os.path.join('./out', filename))[0]
 
-        with AzarArchive(path, self.out_path, ShennonEncoder, self.progress_callback, self.on_finish) as azar:
+        with AzarArchive(path, self.out_path, CaesarEncoder, self.progress_callback, self.on_finish) as azar:
+            azar.encoder.key = self.encryption_key.value()
             azar.write()
 
     def decode(self):
@@ -76,7 +90,8 @@ class ShennonWidget(QtWidgets.QWidget):
 
         self.out_path = dialog.getSaveFileName(self, 'Select where to save a file', os.path.join('./out', filename))[0]
 
-        with AzarArchive(path, self.out_path, ShennonDecoder, self.progress_callback, self.on_finish) as azar:
+        with AzarArchive(path, self.out_path, CaesarDecoder, self.progress_callback, self.on_finish) as azar:
+            azar.decoder.key = self.encryption_key.value()
             azar.read()
 
     def on_progress(self, total, processed):
@@ -98,6 +113,9 @@ class ShennonWidget(QtWidgets.QWidget):
 
 
 if __name__ == "__main__":
+    if not os.path.exists('out'):
+        os.makedirs('out')
+
     app = QtWidgets.QApplication([])
 
     widget = ShennonWidget()

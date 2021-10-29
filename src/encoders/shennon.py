@@ -57,6 +57,10 @@ class ShennonEncoder(Encoder):
     def write_int(self, n: int, length: int):
         self.writer.write(n.to_bytes(length, BYTE_ORDER))
 
+    def write_symbol(self, symbol):
+        self.write_int(symbol, SYMBOL_LENGTH)
+
+
     def write(self):
         symbols = self.get_symbols()
         probabilities = self.get_probabilities(symbols)
@@ -74,7 +78,7 @@ class ShennonEncoder(Encoder):
 
         # write alphabet
         for item in codes.keys():
-            self.write_int(item, SYMBOL_LENGTH)
+            self.write_symbol(item)
 
         self.next_section()
 
@@ -106,6 +110,9 @@ class ShennonDecoder(Decoder):
         n = self.reader.read(length)
         return int.from_bytes(n, BYTE_ORDER)
 
+    def get_char(self, n: int):
+        return chr(n)
+
     def read(self):
         header = self.reader.read(len(MAGIC_HEADER))
         if header != MAGIC_HEADER:
@@ -122,7 +129,8 @@ class ShennonDecoder(Decoder):
 
         for i in range(0, len(symbols_part), SYMBOL_LENGTH):
             n = int.from_bytes(symbols_part[i:i + SYMBOL_LENGTH], BYTE_ORDER)
-            alphabet[chr(n)] = ''
+            n = self.get_char(n)
+            alphabet[n] = ''
 
         # read codes
         keys = list(alphabet.keys())
