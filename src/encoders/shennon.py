@@ -48,9 +48,6 @@ class ShennonEncoder(Encoder):
 
         return s
 
-    def initialize_archive(self):
-        self.writer.write(MAGIC_HEADER)
-
     def next_section(self):
         self.writer.write(MAGIC_SEPARATOR)
 
@@ -70,8 +67,6 @@ class ShennonEncoder(Encoder):
         data = self.encrypt_data(codes)
 
         # write data to archive
-        self.initialize_archive()
-
         data_length = len(data)
         self.write_int(data_length, INT_LENGTH)
 
@@ -170,7 +165,8 @@ class ShennonDecoder(Decoder):
                 if self.progress_callback is not None:
                     self.progress_callback(data_length, i)
 
-# STRUCTURE:
+# AZAR STRUCTURE:
+#
 # MAGIC_HEADER
 # DATA_LENGTH
 # LETTER[]

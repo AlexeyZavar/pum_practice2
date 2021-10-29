@@ -2,7 +2,7 @@ import os.path
 from enum import Enum
 from typing import Type, Union, Callable
 
-from src.consts import ENCODING
+from src.consts import ENCODING, MAGIC_HEADER
 from src.encoders.base import Encoder, Decoder
 
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -44,8 +44,13 @@ class AzarArchive:
         self.stream.close()
         self.writer_stream.close()
 
+    def initialize_archive(self):
+        self.writer_stream.write(MAGIC_HEADER)
+
     def write(self):
         assert self.mode == AzarArchiveMode.Write
+
+        self.initialize_archive()
 
         self.encoder.write()
         if self.finish_callback is not None:
