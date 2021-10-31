@@ -1,9 +1,9 @@
 from typing import IO, Callable
 
-from src.encoders.shennon import ShennonEncoder, ShennonDecoder
+from src.encoders.shannon import ShannonEncoder, ShannonDecoder
 
 
-class CaesarCipher(ShennonEncoder):
+class CaesarCipher(ShannonEncoder):
     def __init__(self, data: str, writer: IO, progress_callback: Callable[[int, int], None], key: int = 0):
         super().__init__(data, writer, progress_callback)
         self.key = key
@@ -17,7 +17,7 @@ class CaesarCipher(ShennonEncoder):
         super(CaesarCipher, self).write()
 
 
-class CaesarDecoder(ShennonDecoder):
+class CaesarDecoder(ShannonDecoder):
     def __init__(self, reader: IO, writer: IO, progress_callback: Callable[[int, int], None], key: int = 0):
         super().__init__(reader, writer, progress_callback)
         self.key = key

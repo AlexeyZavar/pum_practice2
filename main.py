@@ -8,21 +8,31 @@ from PySide6.QtWidgets import QProgressBar, QVBoxLayout, QPushButton, QFileDialo
 from src import AzarArchive, CaesarCipher, CaesarDecoder, ARCHIVE_EXTENSION
 
 
-class ShennonWidget(QtWidgets.QWidget):
+class ShannonWidget(QtWidgets.QWidget):
     def __init__(self):
-        super(ShennonWidget, self).__init__()
+        super(ShannonWidget, self).__init__()
 
+        #
+        # Window initialization
+        #
         self.setWindowFlag(QtCore.Qt.WindowMinMaxButtonsHint, False)
-        self.setWindowTitle('Shennon | by AlexeyZavar')
+        self.setWindowTitle('Shannon | by AlexeyZavar')
 
+        #
+        # Shared variables
+        #
         self.out_path = ''
         self.progress_callback = self.on_progress
 
         btn_style = 'font-size: 24px'
 
+        #
+        # UI elements
+        #
         self.encode_btn = QPushButton('Encode')
         self.decode_btn = QPushButton('Decode')
 
+        # add event handlers
         self.encode_btn.clicked.connect(self.encode)
         self.decode_btn.clicked.connect(self.decode)
 
@@ -56,9 +66,15 @@ class ShennonWidget(QtWidgets.QWidget):
         dialog = QFileDialog(self)
         path = dialog.getOpenFileName(self, 'Select a file to pack', filter='Text files (*.txt)')[0]
 
+        if not path:
+            return
+
         filename = os.path.basename(path) + '.' + ARCHIVE_EXTENSION
 
         self.out_path = dialog.getSaveFileName(self, 'Select where to save a file', os.path.join('./out', filename))[0]
+
+        if not self.out_path:
+            return
 
         with AzarArchive(path, self.out_path, CaesarCipher, self.progress_callback, self.on_finish) as azar:
             azar.encoder.key = self.encryption_key.value()
@@ -69,9 +85,15 @@ class ShennonWidget(QtWidgets.QWidget):
         path = dialog.getOpenFileName(self, 'Select a file to unpack', './out', filter='AlexeyZavar ARchive (*.azar)')[
             0]
 
+        if not path:
+            return
+
         filename = os.path.basename(path).replace('.' + ARCHIVE_EXTENSION, '')
 
         self.out_path = dialog.getSaveFileName(self, 'Select where to save a file', os.path.join('./out', filename))[0]
+
+        if not self.out_path:
+            return
 
         with AzarArchive(path, self.out_path, CaesarDecoder, self.progress_callback, self.on_finish) as azar:
             azar.decoder.key = self.encryption_key.value()
@@ -101,7 +123,7 @@ if __name__ == "__main__":
 
     app = QtWidgets.QApplication([])
 
-    widget = ShennonWidget()
+    widget = ShannonWidget()
     widget.resize(200, 200)
     widget.show()
 

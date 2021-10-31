@@ -4,7 +4,7 @@ from typing import IO, Callable
 
 from src.consts import ENCODING, SYMBOL_SEPARATOR, SYMBOL_LENGTH, INT_LENGTH, MAGIC_SEPARATOR, MAGIC_HEADER, BYTE_ORDER
 from src.encoders.base import Encoder, Decoder
-from src.utils import get_binary
+from src.utils import get_binary_repr
 
 
 def create_bx(probabilities):
@@ -20,7 +20,7 @@ def create_bx(probabilities):
 
 
 def generate_codes(probabilities, bx):
-    binarized = [(item[0], get_binary(item[1])) for item in bx]
+    binarized = [(item[0], get_binary_repr(item[1])) for item in bx]
     binarized[0] = (binarized[0][0], '0.0000000000000000000000000000000000000')
     res = [(item[0], item[1][2:ceil(abs(log2(probabilities[i][1]))) + 2]) for i, item in
            enumerate(binarized)]
@@ -30,7 +30,7 @@ def generate_codes(probabilities, bx):
     return codes
 
 
-class ShennonEncoder(Encoder):
+class ShannonEncoder(Encoder):
     def __init__(self, data: str, writer: IO, progress_callback: Callable[[int, int], None]):
         super().__init__(data, writer, progress_callback)
 
@@ -92,11 +92,11 @@ class ShennonEncoder(Encoder):
             n = int(s, 2)
             self.write_int(n, 1)
 
-            if self.progress_callback is not None:
+            if self.progress_callback is not None and i % 20 == 0:
                 self.progress_callback(data_length, i)
 
 
-class ShennonDecoder(Decoder):
+class ShannonDecoder(Decoder):
     def __init__(self, reader: IO, writer: IO, progress_callback: Callable[[int, int], None]):
         super().__init__(reader, writer, progress_callback)
 
@@ -162,7 +162,7 @@ class ShennonDecoder(Decoder):
                 self.writer.write(codes[current])
                 current = ''
 
-                if self.progress_callback is not None:
+                if self.progress_callback is not None and i % 20 == 0:
                     self.progress_callback(data_length, i)
 
 # AZAR STRUCTURE:
