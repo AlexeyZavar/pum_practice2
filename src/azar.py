@@ -45,6 +45,7 @@ class AzarArchive:
         self.writer_stream.close()
 
     def initialize_archive(self):
+        # write header
         self.writer_stream.write(MAGIC_HEADER)
 
     def write(self):

@@ -107,6 +107,18 @@ class ShannonDecoder(Decoder):
     def get_char(self, n: int):
         return chr(n)
 
+    def chunk_read_data(self, data_length: int):
+        total = 0
+
+        while total < data_length:
+            n = self.read_int(1)
+            res = bin(n)[2:].rjust(8, '0')
+            if total + len(res) > data_length:
+                yield res[:data_length % 8]
+                return
+            yield res
+            total += len(res)
+
     def read(self):
         header = self.reader.read(len(MAGIC_HEADER))
         if header != MAGIC_HEADER:
@@ -144,26 +156,22 @@ class ShannonDecoder(Decoder):
         codes = {v: k for k, v in alphabet.items()}
 
         # read data
-        data_encoded = ''
-        while len(data_encoded) < data_length:
-            n = self.read_int(1)
-            data_encoded += bin(n)[2:].rjust(8, '0')
-
-        data_encoded = data_encoded[:data_length]
+        data_encoded = self.chunk_read_data(data_length)
 
         # decode data
         current = ''
         i = 0
-        while i < data_length:
-            current += data_encoded[i]
-            i += 1
+        for chunk in data_encoded:
+            for ch in chunk:
+                current += ch
+                i += 1
 
-            if current in codes:
-                self.writer.write(codes[current])
-                current = ''
+                if current in codes:
+                    self.writer.write(codes[current])
+                    current = ''
 
-                if self.progress_callback is not None and i % 20 == 0:
-                    self.progress_callback(data_length, i)
+                    if self.progress_callback is not None and i % 20 == 0:
+                        self.progress_callback(data_length, i)
 
 # AZAR STRUCTURE:
 #
