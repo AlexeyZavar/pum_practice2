@@ -3,7 +3,8 @@ import subprocess
 import sys
 
 from PySide6 import QtCore, QtWidgets
-from PySide6.QtWidgets import QProgressBar, QVBoxLayout, QPushButton, QFileDialog, QApplication, QCheckBox, QSpinBox
+from PySide6.QtWidgets import QProgressBar, QVBoxLayout, QPushButton, QFileDialog, QApplication, QCheckBox, QSpinBox, \
+    QMessageBox
 
 from src import AzarArchive, CaesarCipher, CaesarDecoder, ARCHIVE_EXTENSION
 
@@ -107,9 +108,14 @@ class ShannonWidget(QtWidgets.QWidget):
         if processed % 100:
             QApplication.processEvents()
 
-    def on_finish(self):
-        self.out_path = self.out_path.replace('/', '\\')
-        subprocess.Popen(f'explorer /select,"{self.out_path}"')
+    def on_finish(self, msg: str):
+        if msg != 'OK':
+            msg_box = QMessageBox(QMessageBox.Warning, 'Error while reading\\writing', msg)
+            msg_box.exec()
+            return
+        else:
+            self.out_path = self.out_path.replace('/', '\\')
+            subprocess.Popen(f'explorer /select,"{self.out_path}"')
 
         self.progress_bar.setValue(0)
 

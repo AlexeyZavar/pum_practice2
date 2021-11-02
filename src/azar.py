@@ -15,7 +15,7 @@ class AzarArchiveMode(Enum):
 
 class AzarArchive:
     def __init__(self, path: str, out_path: str, mode_processor: Type[Union[Encoder, Decoder]],
-                 progress_callback: Callable[[int, int], None] = None, finish_callback: Callable[[], None] = None):
+                 progress_callback: Callable[[int, int], None] = None, finish_callback: Callable[[str], None] = None):
         assert os.path.exists(path)
 
         self.finish_callback = finish_callback
@@ -53,12 +53,19 @@ class AzarArchive:
         self.initialize_archive()
 
         self.encoder.write()
+
         if self.finish_callback is not None:
-            self.finish_callback()
+            self.finish_callback('OK')
 
     def read(self):
         assert self.mode == AzarArchiveMode.Read
 
-        self.decoder.read()
+        try:
+            self.decoder.read()
+        except TabError:
+            if self.finish_callback is not None:
+                self.finish_callback('Invalid *.azar archive')
+            return
+
         if self.finish_callback is not None:
-            self.finish_callback()
+            self.finish_callback('OK')
