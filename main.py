@@ -83,8 +83,8 @@ class ShannonWidget(QtWidgets.QWidget):
 
     def decode(self):
         dialog = QFileDialog(self)
-        path = dialog.getOpenFileName(self, 'Select a file to unpack', './out', filter='AlexeyZavar ARchive (*.azar)')[
-            0]
+        path = dialog.getOpenFileName(self, 'Select a file to unpack', './out',
+                                      filter=f'AlexeyZavar ARchive (*.{ARCHIVE_EXTENSION})')[0]
 
         if not path:
             return

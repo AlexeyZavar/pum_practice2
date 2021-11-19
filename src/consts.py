@@ -2,6 +2,15 @@
 # PUM Practice configuration file #
 ###################################
 
+# AZAR ARCHIVE STRUCTURE:
+#
+# MAGIC_HEADER
+# DATA_LENGTH
+# LETTER[]
+# MAGIC_SEPARATOR
+# CODE[]
+# MAGIC_SEPARATOR
+# DATA
 
 # AlexeyZavar ARchive
 ARCHIVE_EXTENSION = 'azar'

@@ -2,7 +2,7 @@ import os.path
 from enum import Enum
 from typing import Type, Union, Callable
 
-from src.consts import ENCODING, MAGIC_HEADER
+from src.consts import ENCODING, MAGIC_HEADER, ARCHIVE_EXTENSION
 from src.encoders.base import Encoder, Decoder
 
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -65,7 +65,7 @@ class AzarArchive:
             self.decoder.read()
         except TabError:
             if self.finish_callback is not None:
-                self.finish_callback('Invalid *.azar archive')
+                self.finish_callback(f'Invalid *.{ARCHIVE_EXTENSION} archive')
             return
 
         if self.finish_callback is not None:

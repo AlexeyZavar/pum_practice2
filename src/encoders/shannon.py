@@ -173,13 +173,3 @@ class ShannonDecoder(Decoder):
 
                     if self.progress_callback is not None and i % CALLBACK_STEP == 0:
                         self.progress_callback(data_length, i)
-
-# AZAR STRUCTURE:
-#
-# MAGIC_HEADER
-# DATA_LENGTH
-# LETTER[]
-# MAGIC_SEPARATOR
-# CODE[]
-# MAGIC_SEPARATOR
-# DATA
