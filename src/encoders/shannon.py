@@ -2,7 +2,8 @@ from collections import Counter
 from math import ceil, log2
 from typing import IO, Callable
 
-from src.consts import ENCODING, SYMBOL_SEPARATOR, SYMBOL_LENGTH, INT_LENGTH, MAGIC_SEPARATOR, MAGIC_HEADER, BYTE_ORDER
+from src.consts import ENCODING, SYMBOL_SEPARATOR, SYMBOL_LENGTH, INT_LENGTH, MAGIC_SEPARATOR, MAGIC_HEADER, BYTE_ORDER, \
+    CALLBACK_STEP
 from src.encoders.base import Encoder, Decoder
 from src.utils import get_binary_repr
 
@@ -92,7 +93,7 @@ class ShannonEncoder(Encoder):
             n = int(s, 2)
             self.write_int(n, 1)
 
-            if self.progress_callback is not None and i % 20 == 0:
+            if self.progress_callback is not None and i % CALLBACK_STEP == 0:
                 self.progress_callback(data_length, i)
 
 
@@ -112,7 +113,7 @@ class ShannonDecoder(Decoder):
 
         while total < data_length:
             n = self.read_int(1)
-            res = bin(n)[2:].rjust(8, '0')
+            res = bin(n)[2:].zfill(8)
             if total + len(res) > data_length:
                 yield res[:data_length % 8]
                 return
@@ -170,7 +171,7 @@ class ShannonDecoder(Decoder):
                     self.writer.write(codes[current])
                     current = ''
 
-                    if self.progress_callback is not None and i % 20 == 0:
+                    if self.progress_callback is not None and i % CALLBACK_STEP == 0:
                         self.progress_callback(data_length, i)
 
 # AZAR STRUCTURE:

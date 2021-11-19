@@ -24,10 +24,10 @@ class AzarArchive:
 
         if self.mode == AzarArchiveMode.Read:
             self.stream = open(path, 'rb')
-            self.writer_stream = open(out_path, 'w', encoding=ENCODING)
+            self.writer_stream = open(out_path, 'w', encoding=ENCODING, newline='\n')
             self.decoder = mode_processor(self.stream, self.writer_stream, progress_callback)
         elif self.mode == AzarArchiveMode.Write:
-            self.stream = open(path, 'r', encoding=ENCODING)
+            self.stream = open(path, 'r', encoding=ENCODING, newline='\n')
             self.writer_stream = open(out_path, 'wb')
             self.encoder = mode_processor(self.stream.read(), self.writer_stream, progress_callback)
         else:

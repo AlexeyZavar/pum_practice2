@@ -43,7 +43,7 @@ class ShannonWidget(QtWidgets.QWidget):
 
         self.encryption_key = QSpinBox()
         self.encryption_key.setMinimum(0)
-        self.encryption_key.setMaximum(13)
+        self.encryption_key.setMaximum(999999)
 
         self.encode_btn.setStyleSheet(btn_style)
         self.decode_btn.setStyleSheet(btn_style)
