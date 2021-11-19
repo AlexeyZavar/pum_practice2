@@ -9,7 +9,7 @@ class CaesarCipher(ShannonEncoder):
         self.key = key
 
     def write_symbol(self, symbol):
-        symbol = symbol + self.key
+        symbol += self.key
 
         super(CaesarCipher, self).write_symbol(symbol)
 
@@ -23,7 +23,7 @@ class CaesarDecoder(ShannonDecoder):
         self.key = key
 
     def get_char(self, n: int):
-        n = n - self.key
+        n -= self.key
 
         return super(CaesarDecoder, self).get_char(n)
 
