@@ -115,7 +115,7 @@ class ShannonDecoder(Decoder):
             n = self.read_int(1)
             res = bin(n)[2:].zfill(8)
             if total + len(res) > data_length:
-                yield res[:data_length % 8]
+                yield bin(n)[2:][:data_length % 8]
                 return
             yield res
             total += len(res)
