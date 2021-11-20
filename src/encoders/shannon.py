@@ -9,6 +9,9 @@ from src.utils import get_binary_repr
 
 
 def create_bx(probabilities):
+    if len(probabilities) == 0:
+        return []
+
     bx = [(probabilities[0][0], 0.0)]
 
     for i, item in enumerate(probabilities):
@@ -21,6 +24,12 @@ def create_bx(probabilities):
 
 
 def generate_codes(probabilities, bx):
+    if len(probabilities) == 0:
+        return dict()
+
+    if len(probabilities) == 1:
+        return {probabilities[0][0]: '1'}
+
     binarized = [(item[0], get_binary_repr(item[1])) for item in bx]
     binarized[0] = (binarized[0][0], '0.0000000000000000000000000000000000000')
     res = [(item[0], item[1][2:ceil(abs(log2(probabilities[i][1]))) + 2]) for i, item in
@@ -84,10 +93,11 @@ class ShannonEncoder(Encoder):
 
         self.next_section()
 
-        # write data
+        # padding for the end of the data
         if len(data) % 8 != 0:
-            data += '0' * (len(data) % 8)
+            data += '0' * (8 - len(data) % 8)
 
+        # write data
         for i in range(0, len(data), 8):
             s = data[i:i + 8]
             n = int(s, 2)
@@ -115,7 +125,7 @@ class ShannonDecoder(Decoder):
             n = self.read_int(1)
             res = bin(n)[2:].zfill(8)
             if total + len(res) > data_length:
-                yield bin(n)[2:][:data_length % 8]
+                yield res[:data_length % 8]
                 return
             yield res
             total += len(res)

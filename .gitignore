@@ -137,8 +137,7 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-.azar
-.txt
+*.azar
 
+out/
 .idea/
-.out/
