@@ -52,11 +52,7 @@ class ShannonEncoder(Encoder):
         return [(item[0], item[1] / self.data_length) for item in symbols]
 
     def encrypt_data(self, codes):
-        s = ''
-        for item in self.data:
-            s += codes[ord(item)]
-
-        return s
+        return ''.join(codes[ord(item)] for item in self.data)
 
     def next_section(self):
         self.writer.write(MAGIC_SEPARATOR)
