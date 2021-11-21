@@ -122,7 +122,12 @@ class ShannonWidget(QtWidgets.QWidget):
 
         with AzarArchive(path, self.out_path, CaesarDecoder, self.progress_callback, self.on_finish) as azar:
             azar.decoder.key = self.encryption_key.value()
-            azar.read()
+
+            try:
+                azar.read()
+            except ValueError:
+                self.on_finish('Invalid encryption key')
+
 
     def setDisabled(self, state: bool):
         self.encode_btn.setDisabled(state)
