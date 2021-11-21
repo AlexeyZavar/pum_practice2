@@ -4,6 +4,7 @@ import os
 import shutil
 import sys
 import tempfile
+import time
 
 from src import AzarArchive
 from src.encoders.shannon import ShannonEncoder, ShannonDecoder
@@ -41,12 +42,20 @@ print(f'Processing {filename}')
 print()
 
 print('Encoding...')
+start = time.time()
 with AzarArchive(filename, tempname1, ShannonEncoder) as enc:
     enc.write()
+end = time.time()
+print(f'{end - start} seconds elapsed')
+print()
 
 print('Decoding...')
+start = time.time()
 with AzarArchive(tempname1, tempname2, ShannonDecoder) as dec:
     dec.read()
+end = time.time()
+print(f'{end - start} seconds elapsed')
+print()
 
 text1 = read_string(filename)
 text2 = read_string(tempname2)
